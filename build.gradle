@@ -18,14 +18,15 @@ repositories {
 }
 
 dependencies {
-compileOnly "com.destroystokyo.paper:paper-api:1.16.5-R0.1-SNAPSHOT"
+    compileOnly "com.destroystokyo.paper:paper-api:1.16.5-R0.1-SNAPSHOT"
+    implementation group: 'com.zaxxer', name: 'HikariCP', version: '4.0.3'
 }
 
-def targetJavaVersion = 8
+def targetJavaVersion = 16
 java {
     def javaVersion = JavaVersion.toVersion(targetJavaVersion)
-    sourceCompatibility = javaVersion
-    targetCompatibility = javaVersion
+    sourceCompatibility = 16
+    targetCompatibility = 16
     if (JavaVersion.current() < javaVersion) {
         toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
     }
@@ -46,4 +47,11 @@ processResources {
     filesMatching('plugin.yml') {
         expand props
     }
+}
+
+jar {
+    from {
+        configurations.runtimeClasspath.collect { it.directory ? it : zipTree(it) }
+    }
+    duplicatesStrategy DuplicatesStrategy.EXCLUDE
 }
