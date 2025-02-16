@@ -1,0 +1,4 @@
+name: ClanPruginV2
+version: '${version}'
+main: ru.traiwy.clanpruginv2.ClanPruginV2
+api-version: '1.16'
