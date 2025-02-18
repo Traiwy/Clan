@@ -11,6 +11,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import ru.traiwy.clanpruginv2.ClanPruginV2;
 
+import java.util.UUID;
 
 
 public class EventonInventoryClick implements Listener {
@@ -27,58 +28,38 @@ public class EventonInventoryClick implements Listener {
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
-        Player player = (Player) event.getWhoClicked();
-        Inventory clickedInventory = event.getClickedInventory();
-        ItemStack clickItem = event.getCurrentItem();
+            Player player = (Player) event.getWhoClicked();
+            Inventory clickedInventory = event.getClickedInventory();
+            ItemStack clickItem = event.getCurrentItem();
 
-
-        if (event.getView().getTitle().equals("Выберите тип клана")) {
-            if (clickItem != null) {
-                if (clickItem.getType() == Material.IRON_SWORD) {
-                    if (player.getInventory().containsAtLeast(new ItemStack(Material.DIAMOND), 5)) {
-                        player.getInventory().removeItem(new ItemStack(Material.DIAMOND, 5));
-                        player.closeInventory();
-                        eventOnPlayerChat.setAwaitingClanName(player.getUniqueId(), true);
-                        int taskID = Bukkit.getScheduler().runTaskTimer(clanPruginV2, () -> {
-                            sendTextTitle(player);
-                        }, 0L, 20L).getTaskId();
-                        eventOnPlayerChat.setPlayerTaskId(player.getUniqueId(), taskID);
+            if (event.getView().getTitle().equals("Выберите тип клана")) {
+                if (clickItem != null) {
+                    if (clickItem.getType() == Material.IRON_SWORD) {
+                        if (player.getInventory().containsAtLeast(new ItemStack(Material.DIAMOND), 5)) {
+                            player.getInventory().removeItem(new ItemStack(Material.DIAMOND, 5));
+                            player.closeInventory();
+                            eventOnPlayerChat.startClanCreation(player);
+                            event.setCancelled(true);
+                        } else {
+                            player.sendMessage("недостаточно средств, для создания кланов ( 5 алмазов )");
+                            event.setCancelled(true);
+                        }
+                    } else if (clickItem.getType() == Material.IRON_HOE) {
                         event.setCancelled(true);
-                    } else {
-                        player.sendMessage("недостаточно средств, для создания кланов ( 5 алмазов )");
+                    } else if (clickItem.getType() == Material.ARROW) {
+                        player.closeInventory();
                         event.setCancelled(true);
                     }
-                } else if (clickItem.getType() == Material.IRON_HOE) {
+                }
+            } else if (clickItem != null) {
+                if (clickItem.getType() == Material.TARGET) {
+                    clanViborMenu.CreateChoiseInventory(player);
                     event.setCancelled(true);
-                } else if (clickItem.getType() == Material.ARROW) {
+                } else if (clickItem.getType() == Material.PAPER || clickItem.getType() == Material.ARROW) {
+                    event.setCancelled(true);
                     player.closeInventory();
-                    event.setCancelled(true);
                 }
             }
-        } else if (clickItem != null) {
-            if (clickItem.getType() == Material.TARGET) {
-                clanViborMenu.CreateChoiseInventory(player);
-                event.setCancelled(true);
-            } else if (clickItem.getType() == Material.PAPER || clickItem.getType() == Material.ARROW) {
-                event.setCancelled(true);
-                player.closeInventory();
-            }
+
         }
-
     }
-
-    public void sendTextTitle(Player player){
-        player.sendMessage("");
-        player.sendMessage("");
-        player.sendMessage("");
-        player.sendMessage("");
-        player.sendMessage("");
-        player.sendMessage("");
-        player.sendMessage("");
-        player.sendMessage("");
-        player.sendMessage("");
-        player.sendMessage("");
-        player.sendMessage( "§l§cВведите название клана");
-
-    }
-}
