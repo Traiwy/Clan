@@ -19,9 +19,10 @@ public final class ClanPruginV2 extends JavaPlugin {
         inventoryClan = new InventoryClan(this);
         mySQLStorage = new MySQLStorage();
         clanViborMenu = new ClanViborMenu(this);
+        EventOnPlayerChat eventOnPlayerChat = new EventOnPlayerChat(mySQLStorage, this);
         this.getCommand("clan").setExecutor(new ClanMainMenuCommand(this));
-        getServer().getPluginManager().registerEvents(new EventonInventoryClick(this), this);
-        getServer().getPluginManager().registerEvents(new EventOnPlayerChat(mySQLStorage), this);
+        getServer().getPluginManager().registerEvents(new EventonInventoryClick(this, eventOnPlayerChat), this);
+        getServer().getPluginManager().registerEvents(new EventOnPlayerChat(mySQLStorage, this), this);
     }
     @Override
     public void onDisable() {

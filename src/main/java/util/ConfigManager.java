@@ -1,8 +1,20 @@
 package util;
 
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.plugin.java.JavaPlugin;
+import ru.traiwy.clanpruginv2.ClanPruginV2;
 
 public class ConfigManager {
+    private final ClanPruginV2 plugin;
+    public ConfigManager(ClanPruginV2 plugin){
+        this.plugin = plugin;
+        load(plugin.getConfig());
+        plugin.saveConfig();
+    }
+    public void reloadConfig() {
+        plugin.reloadConfig();
+        load(plugin.getConfig());
+    }
 
     private void load(FileConfiguration file){
         MySQL.HOST = file.getString("database.host");
