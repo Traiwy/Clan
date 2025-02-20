@@ -6,6 +6,7 @@ import event.EventonInventoryClick;
 import inventoryClan.ClanViborMenu;
 import inventoryClan.InventoryClan;
 import lombok.Getter;
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import util.ConfigManager;
 import util.MySQLStorage;
@@ -30,6 +31,7 @@ public final class ClanPruginV2 extends JavaPlugin {
         this.getCommand("clan").setExecutor(new ClanMainMenuCommand(this));
         getServer().getPluginManager().registerEvents(new EventonInventoryClick(this, eventOnPlayerChat), this);
         getServer().getPluginManager().registerEvents(new EventOnPlayerChat(mySQLStorage, this), this);
+
     }
     @Override
     public void onDisable() {

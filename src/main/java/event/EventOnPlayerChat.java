@@ -13,7 +13,7 @@ import java.util.*;
 public class EventOnPlayerChat implements Listener {
 
     private final MySQLStorage mySQLStorage;
-    private final Set<UUID> awaitingClanName = new HashSet<>();
+    private static final Set<UUID> awaitingClanName = new HashSet<>();
     private final ClanPruginV2 plugin;
 
     public EventOnPlayerChat(MySQLStorage mySQLStorage, ClanPruginV2 plugin) {
@@ -62,8 +62,8 @@ public class EventOnPlayerChat implements Listener {
     }
 
     public void sendTextTitle(Player player) {
-        for (int i = 0; i < 10; i++) {
-            player.sendMessage("");
+        for(int i = 1; i < 10; i++){
+            player.sendMessage(" ");
         }
         player.sendMessage("§l§cВведите название клана");
     }
