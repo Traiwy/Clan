@@ -20,6 +20,8 @@ repositories {
 dependencies {
     compileOnly "com.destroystokyo.paper:paper-api:1.16.5-R0.1-SNAPSHOT"
     implementation group: 'com.zaxxer', name: 'HikariCP', version: '4.0.3'
+    compileOnly 'org.projectlombok:lombok:1.18.24'
+    annotationProcessor 'org.projectlombok:lombok:1.18.24'
 }
 
 def targetJavaVersion = 16

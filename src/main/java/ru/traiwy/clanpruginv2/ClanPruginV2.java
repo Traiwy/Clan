@@ -5,10 +5,15 @@ import event.EventOnPlayerChat;
 import event.EventonInventoryClick;
 import inventoryClan.ClanViborMenu;
 import inventoryClan.InventoryClan;
+import lombok.Getter;
 import org.bukkit.plugin.java.JavaPlugin;
+import util.ConfigManager;
 import util.MySQLStorage;
 
 public final class ClanPruginV2 extends JavaPlugin {
+
+    @Getter
+    private static ClanPruginV2 instance;
 
     private InventoryClan inventoryClan;
     private ClanViborMenu clanViborMenu;
@@ -16,6 +21,8 @@ public final class ClanPruginV2 extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        instance = this;
+        ConfigManager.loadConfig();
         inventoryClan = new InventoryClan(this);
         mySQLStorage = new MySQLStorage();
         clanViborMenu = new ClanViborMenu(this);

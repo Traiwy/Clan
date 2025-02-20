@@ -8,14 +8,12 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import ru.traiwy.clanpruginv2.ClanPruginV2;
 import util.MySQLStorage;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class EventOnPlayerChat implements Listener {
 
     private final MySQLStorage mySQLStorage;
-    private final Map<UUID, ClanCreationData> clanCreationDataMap = new HashMap<>();
+    private final Set<UUID> awaitingClanName = new HashSet<>();
     private final ClanPruginV2 plugin;
 
     public EventOnPlayerChat(MySQLStorage mySQLStorage, ClanPruginV2 plugin) {
@@ -25,25 +23,20 @@ public class EventOnPlayerChat implements Listener {
 
 
     public void startClanCreation(Player player) {
-        ClanCreationData data = new ClanCreationData();
-        data.setAwaitingClanName(true);
-        int taskID = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
-            sendTextTitle(player);
-        }, 0L, 20L).getTaskId();
-        data.setTaskId(taskID);
-        clanCreationDataMap.put(player.getUniqueId(), data);
-    }
-
-    public void cancelClanCreation(Player player) {
-        ClanCreationData data = clanCreationDataMap.get(player.getUniqueId());
-        if (data != null) {
-            Bukkit.getScheduler().cancelTask(data.getTaskId());
-            clanCreationDataMap.remove(player.getUniqueId());
+        UUID playerId = player.getUniqueId();
+        awaitingClanName.add(playerId);
+        if(awaitingClanName.contains(playerId)){
+            Bukkit.getScheduler().runTaskTimer(plugin, () -> sendTextTitle(player), 0L, 20L);
+            Bukkit.getLogger().info("startClanCreation: Started clan creation for " + player.getName());
+        }else{
+            Bukkit.getLogger().info("player not have in Hash awaitingClanName" + player.getName());
         }
     }
 
-    private ClanCreationData getClanCreationData(Player player) {
-        return clanCreationDataMap.get(player.getUniqueId());
+    public void cancelClanCreation(Player player) {
+        awaitingClanName.remove(player.getUniqueId());
+        Bukkit.getScheduler().cancelTasks(plugin);
+        Bukkit.getLogger().info("cancelClanCreation: Canceled clan creation for " + player.getName());
     }
 
 
@@ -52,61 +45,26 @@ public class EventOnPlayerChat implements Listener {
         Player player = event.getPlayer();
         UUID playerId = player.getUniqueId();
 
-        ClanCreationData data = getClanCreationData(player);
-        if (data != null && data.isAwaitingClanName()) {
+        if (awaitingClanName.contains(playerId)) {
             event.setCancelled(true);
-            String clanName = event.getMessage();
             cancelClanCreation(player);
-
+            String clanName = event.getMessage();
             Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
                 try {
                     mySQLStorage.addClan(player.getName(), clanName);
-                    Bukkit.getScheduler().runTask(plugin, () -> {
-                        player.sendMessage("Клан '" + clanName + "' успешно создан!");
-                    });
+                    Bukkit.getScheduler().runTask(plugin, () -> player.sendMessage("Клан успешно создан!"));
                 } catch (Exception e) {
                     e.printStackTrace();
-                    Bukkit.getScheduler().runTask(plugin, () -> {
-                        player.sendMessage("Произошла ошибка при создании клана: " + e.getMessage());
-                    });
+                    Bukkit.getScheduler().runTask(plugin, () -> player.sendMessage("Ошибка создания клана: " + e.getMessage()));
                 }
             });
         }
     }
 
-    public void sendTextTitle(Player player){
-        player.sendMessage("");
-        player.sendMessage("");
-        player.sendMessage("");
-        player.sendMessage("");
-        player.sendMessage("");
-        player.sendMessage("");
-        player.sendMessage("");
-        player.sendMessage("");
-        player.sendMessage("");
-        player.sendMessage("");
-        player.sendMessage( "§l§cВведите название клана");
-
-    }
-
-    private static class ClanCreationData {
-        private boolean awaitingClanName = false;
-        private int taskId = -1;
-
-        public boolean isAwaitingClanName() {
-            return awaitingClanName;
+    public void sendTextTitle(Player player) {
+        for (int i = 0; i < 10; i++) {
+            player.sendMessage("");
         }
-
-        public void setAwaitingClanName(boolean awaitingClanName) {
-            this.awaitingClanName = awaitingClanName;
-        }
-
-        public int getTaskId() {
-            return taskId;
-        }
-
-        public void setTaskId(int taskId) {
-            this.taskId = taskId;
-        }
+        player.sendMessage("§l§cВведите название клана");
     }
 }

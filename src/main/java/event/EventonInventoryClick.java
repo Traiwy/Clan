@@ -38,6 +38,7 @@ public class EventonInventoryClick implements Listener {
                         if (player.getInventory().containsAtLeast(new ItemStack(Material.DIAMOND), 5)) {
                             player.getInventory().removeItem(new ItemStack(Material.DIAMOND, 5));
                             player.closeInventory();
+                            Bukkit.getLogger().info("EventonInventoryClick: Calling startClanCreation for " + player.getName());
                             eventOnPlayerChat.startClanCreation(player);
                             event.setCancelled(true);
                         } else {
